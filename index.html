@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e75b25">
+  <meta name="description" content="Golden-baseline pizza dough planner and fermentation assistant.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Pizza Dough Assistant</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div class="logo" aria-hidden="true">🍕</div>
+      <div>
+        <h1>Pizza Dough Assistant</h1>
+        <p>Golden-baseline driven dough planning</p>
+      </div>
+    </header>
+
+    <section class="panel" id="setupPanel">
+      <h2>New dough</h2>
+
+      <div class="grid two">
+        <label>
+          <span>Number of pizzas</span>
+          <input id="pizzas" type="number" min="1" max="20" value="6">
+        </label>
+
+        <label>
+          <span>Pizza diameter</span>
+          <select id="diameter">
+            <option value="10">10 inch</option>
+            <option value="11">11 inch</option>
+            <option value="12" selected>12 inch</option>
+            <option value="13">13 inch</option>
+            <option value="14">14 inch</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Eat date</span>
+          <input id="eatDate" type="date">
+        </label>
+
+        <label>
+          <span>Eat time</span>
+          <input id="eatTime" type="time" value="18:00">
+        </label>
+
+        <label>
+          <span>Earliest start date</span>
+          <input id="startDate" type="date">
+        </label>
+
+        <label>
+          <span>Earliest start time</span>
+          <input id="startTime" type="time" value="13:00">
+        </label>
+
+        <label>
+          <span>Flour</span>
+          <select id="flour">
+            <option selected>00 flour — baseline</option>
+            <option>Caputo Pizzeria</option>
+            <option>Other 00 flour</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Room temperature °C</span>
+          <input id="temp" type="number" min="15" max="35" step="0.5" value="21">
+        </label>
+      </div>
+
+      <div class="availability-head">
+        <div>
+          <strong>When are you unavailable?</strong>
+          <small>Add as many periods as you need.</small>
+        </div>
+        <span>Optional</span>
+      </div>
+
+      <div class="away-list" id="awayList"></div>
+      <button class="btn add-away" id="addAway" type="button">＋ Add unavailable period</button>
+      <p class="microcopy">Each period stays within one day. For an overnight block, add one period on each day.</p>
+
+      <div class="baseline">
+        <span>63% hydration</span>
+        <span>2.77% salt</span>
+        <span>32% poolish flour</span>
+        <span>⭐ Golden baseline</span>
+      </div>
+
+      <button class="btn primary full" id="calculateBtn" type="button">Build my dough plan</button>
+      <div class="notice" id="notice" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="result" id="result" hidden>
+      <section class="panel">
+        <h2>Your dough</h2>
+        <div class="grid three metrics">
+          <div class="metric"><span>Total dough</span><b id="totalDough">—</b></div>
+          <div class="metric"><span>Per ball</span><b id="ballWeight">—</b></div>
+          <div class="metric"><span>Total flour</span><b id="totalFlour">—</b></div>
+        </div>
+
+        <div class="recipe-grid">
+          <div class="recipe-box">
+            <h3>Poolish</h3>
+            <div class="row"><span>00 flour</span><b id="poolFlour">—</b></div>
+            <div class="row"><span>Water</span><b id="poolWater">—</b></div>
+            <div class="row"><span>Instant dry yeast</span><b id="poolYeast">—</b></div>
+          </div>
+
+          <div class="recipe-box">
+            <h3>Final mix</h3>
+            <div class="row"><span>All poolish</span><b>all</b></div>
+            <div class="row"><span>00 flour</span><b id="finalFlour">—</b></div>
+            <div class="row"><span>Remaining water</span><b id="remainingWater">—</b></div>
+            <div class="row"><span>Fine sea salt</span><b id="salt">—</b></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Exact schedule</h2>
+        <div class="timeline" id="timeline"></div>
+        <p class="microcopy">The clock is the plan, not the boss. Poolish maturity and dough condition override the target time.</p>
+      </section>
+
+      <div class="button-row">
+        <button class="btn secondary" id="editBtn" type="button">Edit plan</button>
+        <button class="btn primary" id="startBtn" type="button">Start this dough</button>
+      </div>
+    </section>
+
+    <section class="tracker" id="tracker" hidden>
+      <section class="next-card">
+        <span>Next action</span>
+        <h2 id="nextAction">Make poolish</h2>
+        <p id="nextTime"></p>
+        <p id="nextQty"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Dough progress</h2>
+        <div class="progress"><div id="bar"></div></div>
+        <p id="stageHint"></p>
+        <div class="button-row">
+          <button class="btn secondary" id="backBtn" type="button">← Previous</button>
+          <button class="btn primary" id="doneBtn" type="button">Done — next step</button>
+        </div>
+        <button class="btn text-btn full" id="newPlanBtn" type="button">Start a different dough</button>
+      </section>
+    </section>
+
+    <footer>
+      <span id="installHint">Installable PWA • works offline after first load</span>
+    </footer>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
